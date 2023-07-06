@@ -1,3 +1,6 @@
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
@@ -25,7 +28,12 @@ def authoriation_api_view(request):
 
         user = authenticate(**serializer.validated_data)
 
+        @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+        def create_auth_token(sender, instance=None, created=False, **kwargs):
+            if created:
+                Token.objects.create(user=instance)
         if user:
-            token, _ = Token.objects.get_or_create(user=user)
-            return Response(data={'key': token.key})
-        return Response(status=status.HTTP_401_UNAUTHORIZED, data='Неправильный логин или пароль')
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
+        else:
+            return Response({'error': 'Неверные учетные данные'}, status=400)

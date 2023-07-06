@@ -57,6 +57,7 @@ class OrderDateilAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = OrdersSerializer
     lookup_field = 'id'
 
+
     def put(self, request, *args, **kwargs):
         try:
             item = Orders.objects.get(id=kwargs['id'])

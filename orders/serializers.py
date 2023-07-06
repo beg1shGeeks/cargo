@@ -4,10 +4,12 @@ from .models import (
     Orders
 )
 
+
 class OrdersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Orders
         fields = '__all__'
+
 
 class OrderValidateSerialiser(serializers.Serializer):
     cargo_name = serializers.CharField(required=True)
@@ -22,3 +24,4 @@ class OrderValidateSerialiser(serializers.Serializer):
     loading_car = serializers.CharField(required=True)
     unloading_car = serializers.CharField(required=True)
     price = serializers.IntegerField(required=True)
+
